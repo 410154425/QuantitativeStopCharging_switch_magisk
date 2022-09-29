@@ -5,7 +5,7 @@
 MODDIR=${0%/*}
 #----------
 module_version="$(cat "$MODDIR/module.prop" | egrep 'version=' | sed -n 's/.*version=//g;$p')"
-Host_version="$(cat "$MODDIR/qsc.sh" | egrep '^#version=' | sed -n 's/.*version=//g;$p')"
+Host_version="$(cat "$MODDIR/qsc_switch.sh" | egrep '^#version=' | sed -n 's/.*version=//g;$p')"
 state="$(cat "$MODDIR/module.prop" | egrep '^description=' | sed -n 's/.*=\[//g;s/\].*//g;p')"
 config_conf="$(cat "$MODDIR/config.conf" | egrep -v '^#')"
 dumpsys_battery="$(dumpsys battery)"
@@ -48,7 +48,7 @@ if [ ! -n "$temperature" ]; then
 		echo "无法获取温度，请联系作者适配"
 	fi
 fi
-echo "停止充电电量$power_stop,恢复充电电量$power_start,开关温控$temperature_switch,停止温度$temperature_switch_stop,恢复温度$temperature_switch_start,电量$battery_level,温度$temperature,power_on$power_on,power_off$power_off,power_switch$power_switch,充电状态$dumpsys_charging"
+echo "充电状态$dumpsys_charging,power_on$power_on,power_off$power_off,power_switch$power_switch,停止充电电量$power_stop,恢复充电电量$power_start,开关温控$temperature_switch,停止温度$temperature_switch_stop,恢复温度$temperature_switch_start,电量$battery_level,温度$temperature"
 #----------
 echo ---------- 搜索开关 ------------
 switch_list="$(cat "$MODDIR/list_switch")"
