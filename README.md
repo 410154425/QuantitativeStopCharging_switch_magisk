@@ -1,0 +1,1 @@
+# QuantitativeStopCharging_switch_magisk
