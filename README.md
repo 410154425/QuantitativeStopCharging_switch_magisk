@@ -6,3 +6,5 @@
 到达指定电量、指定温度自动停止充电、自动恢复充电。
 
 配置路径：/data/adb/modules/QuantitativeStopCharging_switch/config.conf，日志log.log。
+
+数值范围要填写正确，否则无效。
