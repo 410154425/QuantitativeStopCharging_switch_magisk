@@ -33,13 +33,13 @@ if [ "$dumpsys_charging" = "true" ]; then
 		sed -i '1,5d' "$MODDIR/log.log" > /dev/null 2>&1
 	fi
 	if [ ! -f "$MODDIR/list_switch" ]; then
-		if [ -f "$MODDIR/list_search.sh" ]; then
-			chmod 0755 "$MODDIR/list_search.sh"
-			"$MODDIR/list_search.sh" > /dev/null 2>&1
-			echo "$(date +%F_%T) 缺少列表文件，正在创建，请稍等" >> "$MODDIR/log.log"
+		if [ -f "$MODDIR/list_switch.sh" ]; then
+			chmod 0755 "$MODDIR/list_switch.sh"
+			"$MODDIR/list_switch.sh" > /dev/null 2>&1
+			echo "$(date +%F_%T) 缺少列表文件，正在创建，请稍等" > "$MODDIR/log.log"
 			exit 0
 		else
-			echo "$(date +%F_%T) list_search.sh文件不存在，请重新安装模块重启" >> "$MODDIR/log.log"
+			echo "$(date +%F_%T) list_switch.sh文件不存在，请重新安装模块重启" > "$MODDIR/log.log"
 			exit 0
 		fi
 	fi
