@@ -8,6 +8,13 @@ power_start="$(echo "$config_conf" | egrep '^power_start=' | sed -n 's/power_sta
 temperature_switch="$(echo "$config_conf" | egrep '^temperature_switch=' | sed -n 's/temperature_switch=//g;$p')"
 temperature_switch_stop="$(echo "$config_conf" | egrep '^temperature_switch_stop=' | sed -n 's/temperature_switch_stop=//g;$p')"
 temperature_switch_start="$(echo "$config_conf" | egrep '^temperature_switch_start=' | sed -n 's/temperature_switch_start=//g;$p')"
+off_qsc=0
+if [ -f "$MODDIR/off_qsc" -o -f "$MODDIR/disable" ]; then
+	off_qsc=1
+	power_stop="110"
+	power_start="105"
+	temperature_switch="0"
+fi
 log_log=0
 cpu_log=0
 if [ ! -n "$battery_level" ]; then
@@ -86,7 +93,11 @@ if [ "$dumpsys_charging" = "true" ]; then
 	if [ ! -f "$MODDIR/power_on" ]; then
 		rm -f "$MODDIR/power_off" > /dev/null 2>&1
 		touch "$MODDIR/power_on" > /dev/null 2>&1
-		sed -i 's/\[.*\]/\[ 充电中 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+		if [ "$off_qsc" = "1" ]; then
+			sed -i 's/\[.*\]/\[ 模块已关闭 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+		else
+			sed -i 's/\[.*\]/\[ 充电中 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+		fi
 	fi
 else
 	if [ -f "$MODDIR/power_switch" ]; then
@@ -124,8 +135,12 @@ else
 	if [ ! -f "$MODDIR/power_off" ]; then
 		rm -f "$MODDIR/power_on" > /dev/null 2>&1
 		touch "$MODDIR/power_off" > /dev/null 2>&1
-		sed -i 's/\[.*\]/\[ 未充电 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+		if [ "$off_qsc" = "1" ]; then
+			sed -i 's/\[.*\]/\[ 模块已关闭 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+		else
+			sed -i 's/\[.*\]/\[ 未充电 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+		fi
 	fi
 fi
-#version=2022093000
+#version=2022100100
 # ##
