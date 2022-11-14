@@ -2,6 +2,8 @@ MODDIR=${0%/*}
 config_conf="$(cat "$MODDIR/config.conf" | egrep -v '^#')"
 dumpsys_battery="$(dumpsys battery)"
 battery_level="$(cat '/sys/class/power_supply/battery/capacity')"
+battery_powered="$(echo "$dumpsys_battery" | egrep 'powered: true')"
+battery_status="$(echo "$dumpsys_battery" | egrep 'status: ' | sed -n 's/.*status: //g;$p')"
 temperature="$(cat '/sys/class/power_supply/battery/temp' | cut -c '1-2')"
 power_stop="$(echo "$config_conf" | egrep '^power_stop=' | sed -n 's/power_stop=//g;$p')"
 power_start="$(echo "$config_conf" | egrep '^power_start=' | sed -n 's/power_start=//g;$p')"
@@ -44,8 +46,7 @@ if [ ! -f "$MODDIR/list_switch" ]; then
 		exit 0
 	fi
 fi
-dumpsys_charging="$(dumpsys deviceidle get charging)"
-if [ "$dumpsys_charging" = "true" ]; then
+if [ -n "$battery_powered" -a "$battery_status" = "2" ]; then
 	log_n="$(cat "$MODDIR/log.log" | wc -l)"
 	if [ "$log_n" -gt "30" ]; then
 		sed -i '1,5d' "$MODDIR/log.log" > /dev/null 2>&1
@@ -100,38 +101,6 @@ if [ "$dumpsys_charging" = "true" ]; then
 		fi
 	fi
 else
-	if [ -f "$MODDIR/power_switch" ]; then
-		if [ "$battery_level" -le "$power_start" -o -f "$MODDIR/temp_switch" ]; then
-			if [ "$temperature_switch" = "1" -a -f "$MODDIR/temp_switch" ]; then
-				if [ -n "$temperature_switch_start" -a "$temperature" -gt "$temperature_switch_start" ]; then
-					exit 0
-				else
-					cpu_log=1
-				fi
-			fi
-			sleep 5
-			switch_list="$(cat "$MODDIR/list_switch")"
-			switch_list="$switch_list /sys/class/power_supply/battery/batt_slate_mode,start=0,stop=1 /sys/class/power_supply/battery/store_mode,start=0,stop=1 /sys/class/power_supply/idt/pin_enabled,start=1,stop=0 /sys/kernel/debug/google_charger/chg_suspend,start=0,stop=1 /sys/kernel/debug/google_charger/chg_mode,start=1,stop=0 /proc/driver/charger_limit_enable,start=0,stop=1 /proc/driver/charger_limit,start=100,stop=1 /proc/mtk_battery_cmd/current_cmd,start=0_0,stop=0_1 /proc/mtk_battery_cmd/en_power_path,start=1,stop=0"
-			for i in $switch_list ; do
-				power_switch_route="$(echo "$i" | sed -n 's/,start=.*//g;$p')"
-				if [ -f "$power_switch_route" ]; then
-					chmod 0644 "$power_switch_route"
-					power_switch_start="$(echo "$i" | sed -n 's/.*,start=//g;s/,stop=.*//g;s/_/ /g;$p')"
-					echo "$power_switch_start" > "$power_switch_route"
-					log_log=1
-				fi
-			done
-			rm -f "$MODDIR/temp_switch" > /dev/null 2>&1
-			rm -f "$MODDIR/power_switch" > /dev/null 2>&1
-			if [ "$log_log" = "1" ]; then
-				if [ "$cpu_log" = "1" ]; then
-					echo "$(date +%F_%T) 电量$battery_level 触发开关温控：恢复充电 温度$temperature" >> "$MODDIR/log.log"
-				else
-					echo "$(date +%F_%T) 电量$battery_level 恢复充电" >> "$MODDIR/log.log"
-				fi
-			fi
-		fi
-	fi
 	if [ ! -f "$MODDIR/power_off" ]; then
 		rm -f "$MODDIR/power_on" > /dev/null 2>&1
 		touch "$MODDIR/power_off" > /dev/null 2>&1
@@ -142,5 +111,37 @@ else
 		fi
 	fi
 fi
-#version=2022100500
+if [ -f "$MODDIR/power_switch" ]; then
+	if [ "$battery_level" -le "$power_start" -o -f "$MODDIR/temp_switch" ]; then
+		if [ "$temperature_switch" = "1" -a -f "$MODDIR/temp_switch" ]; then
+			if [ -n "$temperature_switch_start" -a "$temperature" -gt "$temperature_switch_start" ]; then
+				exit 0
+			else
+				cpu_log=1
+			fi
+		fi
+		sleep 5
+		switch_list="$(cat "$MODDIR/list_switch")"
+		switch_list="$switch_list /sys/class/power_supply/battery/batt_slate_mode,start=0,stop=1 /sys/class/power_supply/battery/store_mode,start=0,stop=1 /sys/class/power_supply/idt/pin_enabled,start=1,stop=0 /sys/kernel/debug/google_charger/chg_suspend,start=0,stop=1 /sys/kernel/debug/google_charger/chg_mode,start=1,stop=0 /proc/driver/charger_limit_enable,start=0,stop=1 /proc/driver/charger_limit,start=100,stop=1 /proc/mtk_battery_cmd/current_cmd,start=0_0,stop=0_1 /proc/mtk_battery_cmd/en_power_path,start=1,stop=0"
+		for i in $switch_list ; do
+			power_switch_route="$(echo "$i" | sed -n 's/,start=.*//g;$p')"
+			if [ -f "$power_switch_route" ]; then
+				chmod 0644 "$power_switch_route"
+				power_switch_start="$(echo "$i" | sed -n 's/.*,start=//g;s/,stop=.*//g;s/_/ /g;$p')"
+				echo "$power_switch_start" > "$power_switch_route"
+				log_log=1
+			fi
+		done
+		rm -f "$MODDIR/temp_switch" > /dev/null 2>&1
+		rm -f "$MODDIR/power_switch" > /dev/null 2>&1
+		if [ "$log_log" = "1" ]; then
+			if [ "$cpu_log" = "1" ]; then
+				echo "$(date +%F_%T) 电量$battery_level 触发开关温控：恢复充电 温度$temperature" >> "$MODDIR/log.log"
+			else
+				echo "$(date +%F_%T) 电量$battery_level 恢复充电" >> "$MODDIR/log.log"
+			fi
+		fi
+	fi
+fi
+#version=2022111400
 # ##

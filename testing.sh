@@ -16,7 +16,13 @@ power_start="$(echo "$config_conf" | egrep '^power_start=' | sed -n 's/power_sta
 temperature_switch="$(echo "$config_conf" | egrep '^temperature_switch=' | sed -n 's/temperature_switch=//g;$p')"
 temperature_switch_stop="$(echo "$config_conf" | egrep '^temperature_switch_stop=' | sed -n 's/temperature_switch_stop=//g;$p')"
 temperature_switch_start="$(echo "$config_conf" | egrep '^temperature_switch_start=' | sed -n 's/temperature_switch_start=//g;$p')"
-dumpsys_charging="$(dumpsys deviceidle get charging)"
+battery_powered="$(echo "$dumpsys_battery" | egrep 'powered: true')"
+battery_status="$(echo "$dumpsys_battery" | egrep 'status: ' | sed -n 's/.*status: //g;$p')"
+if [ -n "$battery_powered" -a "$battery_status" = "2" ]; then
+	dumpsys_charging=1
+else
+	dumpsys_charging=0
+fi
 #----------
 echo ---------- 适配 ------------
 dumpsys battery
