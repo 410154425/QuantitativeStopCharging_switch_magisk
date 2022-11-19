@@ -1,5 +1,5 @@
 until [ -f "${0%/*}/qsc_switch.sh" ]; do
-	sed -i 's/\[.*\]/\[ 文件qsc_switch.sh丢失，请重新安装模块重启 \]/g' "${0%/*}/module.prop" > /dev/null 2>&1
+	sed -i 's/\[.*\]/\[ 文件qsc_switch.sh丢失，请重新安装模块重启 \]/g' "${0%/*}/module.prop"
 	sleep 5
 done
 sleep 5
@@ -21,10 +21,10 @@ echo "am start -n com.tencent.mm/.plugin.webview.ui.tools.WebViewUI -d https://p
 echo "echo \"\"" >> "$MODDIR/.投币捐赠.sh"
 echo "echo \"正在跳转QSC定量停充捐赠页面，请稍等。。。\"" >> "$MODDIR/.投币捐赠.sh"
 chmod 0755 "$MODDIR/.投币捐赠.sh"
-rm -f "$MODDIR/list_switch" > /dev/null 2>&1
+rm -f "$MODDIR/list_switch"
 "$MODDIR/list_switch.sh" > /dev/null 2>&1
-rm -f "$MODDIR/power_on" > /dev/null 2>&1
-rm -f "$MODDIR/power_off" > /dev/null 2>&1
+rm -f "$MODDIR/power_on"
+rm -f "$MODDIR/power_off"
 while true ; do
 if [ "$up" = "20" -o "$up" = "7200" ]; then
 	"$MODDIR/up" > /dev/null 2>&1 &

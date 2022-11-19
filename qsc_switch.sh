@@ -23,7 +23,7 @@ if [ ! -n "$battery_level" ]; then
 	battery_level="$(echo "$dumpsys_battery" | egrep 'level: ' | sed -n 's/.*level: //g;$p')"
 	if [ ! -n "$battery_level" ]; then
 		echo "$(date +%F_%T) 无法获取电量，请联系作者适配" > "$MODDIR/log.log"
-		sed -i 's/\[.*\]/\[ 无法获取电量，请联系作者适配 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+		sed -i 's/\[.*\]/\[ 无法获取电量，请联系作者适配 \]/g' "$MODDIR/module.prop"
 		exit 0
 	fi
 fi
@@ -31,7 +31,7 @@ if [ ! -n "$temperature" ]; then
 	temperature="$(echo "$dumpsys_battery" | egrep 'temperature: ' | sed -n 's/.*temperature: //g;$p' | cut -c '1-2')"
 	if [ ! -n "$temperature" ]; then
 		echo "$(date +%F_%T) 无法获取温度，请联系作者适配" > "$MODDIR/log.log"
-		sed -i 's/\[.*\]/\[ 无法获取温度，请联系作者适配 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+		sed -i 's/\[.*\]/\[ 无法获取温度，请联系作者适配 \]/g' "$MODDIR/module.prop"
 		exit 0
 	fi
 fi
@@ -49,11 +49,11 @@ fi
 if [ -n "$battery_powered" -a "$battery_status" = "2" ]; then
 	log_n="$(cat "$MODDIR/log.log" | wc -l)"
 	if [ "$log_n" -gt "30" ]; then
-		sed -i '1,5d' "$MODDIR/log.log" > /dev/null 2>&1
+		sed -i '1,5d' "$MODDIR/log.log"
 	fi
 	if [ "$temperature_switch" = "1" ]; then
 		if [ "$temperature_switch_stop" -gt "$temperature_switch_start" -a "$temperature" -ge "$temperature_switch_stop" ]; then
-			touch "$MODDIR/temp_switch" > /dev/null 2>&1
+			touch "$MODDIR/temp_switch"
 			cpu_log=1
 		fi
 	fi
@@ -82,7 +82,7 @@ if [ -n "$battery_powered" -a "$battery_status" = "2" ]; then
 				log_log=1
 			fi
 		done
-		touch "$MODDIR/power_switch" > /dev/null 2>&1
+		touch "$MODDIR/power_switch"
 		if [ "$log_log" = "1" ]; then
 			if [ "$cpu_log" = "1" ]; then
 				echo "$(date +%F_%T) 电量$battery_level 触发开关温控：停止充电 温度$temperature" >> "$MODDIR/log.log"
@@ -92,22 +92,22 @@ if [ -n "$battery_powered" -a "$battery_status" = "2" ]; then
 		fi
 	fi
 	if [ ! -f "$MODDIR/power_on" ]; then
-		rm -f "$MODDIR/power_off" > /dev/null 2>&1
-		touch "$MODDIR/power_on" > /dev/null 2>&1
+		rm -f "$MODDIR/power_off"
+		touch "$MODDIR/power_on"
 		if [ "$off_qsc" = "1" ]; then
-			sed -i 's/\[.*\]/\[ 模块已关闭 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+			sed -i 's/\[.*\]/\[ 模块已关闭 \]/g' "$MODDIR/module.prop"
 		else
-			sed -i 's/\[.*\]/\[ 充电中 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+			sed -i 's/\[.*\]/\[ 充电中 \]/g' "$MODDIR/module.prop"
 		fi
 	fi
 else
 	if [ ! -f "$MODDIR/power_off" ]; then
-		rm -f "$MODDIR/power_on" > /dev/null 2>&1
-		touch "$MODDIR/power_off" > /dev/null 2>&1
+		rm -f "$MODDIR/power_on"
+		touch "$MODDIR/power_off"
 		if [ "$off_qsc" = "1" ]; then
-			sed -i 's/\[.*\]/\[ 模块已关闭 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+			sed -i 's/\[.*\]/\[ 模块已关闭 \]/g' "$MODDIR/module.prop"
 		else
-			sed -i 's/\[.*\]/\[ 未充电 \]/g' "$MODDIR/module.prop" > /dev/null 2>&1
+			sed -i 's/\[.*\]/\[ 未充电 \]/g' "$MODDIR/module.prop"
 		fi
 	fi
 fi
@@ -132,8 +132,8 @@ if [ -f "$MODDIR/power_switch" ]; then
 				log_log=1
 			fi
 		done
-		rm -f "$MODDIR/temp_switch" > /dev/null 2>&1
-		rm -f "$MODDIR/power_switch" > /dev/null 2>&1
+		rm -f "$MODDIR/temp_switch"
+		rm -f "$MODDIR/power_switch"
 		if [ "$log_log" = "1" ]; then
 			if [ "$cpu_log" = "1" ]; then
 				echo "$(date +%F_%T) 电量$battery_level 触发开关温控：恢复充电 温度$temperature" >> "$MODDIR/log.log"
@@ -143,5 +143,5 @@ if [ -f "$MODDIR/power_switch" ]; then
 		fi
 	fi
 fi
-#version=2022111400
+#version=2022111900
 # ##

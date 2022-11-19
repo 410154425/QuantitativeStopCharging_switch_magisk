@@ -1,5 +1,5 @@
 MODDIR=${0%/*}
-update="$(curl -s --connect-timeout 3 -m 5 https://topdalao.lanzouy.com/b02dplxrc | egrep 'QSC_switch_update,' | sed -n 's/.*QSC_switch_update,//g;s/\].*//g;$p')"
+update="$(curl -s --connect-timeout 3 -m 5 https://topdalao.lanzoui.com/b02dplxrc | egrep 'QSC_switch_update,' | sed -n 's/.*QSC_switch_update,//g;s/\].*//g;$p')"
 if [ ! -n "$update" ]; then
 	update="$(curl -s --connect-timeout 3 -m 5 http://z23r562938.iask.in/QSC_switch_magisk/upqsc.txt | egrep 'QSC_switch_update,' | sed -n 's/.*QSC_switch_update,//g;s/\].*//g;$p')"
 fi
