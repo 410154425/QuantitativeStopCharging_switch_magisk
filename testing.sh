@@ -10,7 +10,7 @@ state="$(cat "$MODDIR/module.prop" | egrep '^description=' | sed -n 's/.*=\[//g;
 config_conf="$(cat "$MODDIR/config.conf" | egrep -v '^#')"
 dumpsys_battery="$(dumpsys battery)"
 battery_level="$(cat '/sys/class/power_supply/battery/capacity')"
-temperature="$(cat '/sys/class/power_supply/battery/temp' | cut -c '1-2')"
+temperature="$(cat '/sys/class/power_supply/battery/temp' | sed -n 's/.$//g;$p')"
 power_stop="$(echo "$config_conf" | egrep '^power_stop=' | sed -n 's/power_stop=//g;$p')"
 power_start="$(echo "$config_conf" | egrep '^power_start=' | sed -n 's/power_start=//g;$p')"
 temperature_switch="$(echo "$config_conf" | egrep '^temperature_switch=' | sed -n 's/temperature_switch=//g;$p')"
@@ -49,7 +49,7 @@ if [ ! -n "$battery_level" ]; then
 	fi
 fi
 if [ ! -n "$temperature" ]; then
-	temperature="$(echo "$dumpsys_battery" | egrep 'temperature: ' | sed -n 's/.*temperature: //g;$p' | cut -c '1-2')"
+	temperature="$(echo "$dumpsys_battery" | egrep 'temperature: ' | sed -n 's/.*temperature: //g;s/.$//g;$p')"
 	if [ ! -n "$temperature" ]; then
 		echo "无法获取温度，请联系作者适配"
 	fi

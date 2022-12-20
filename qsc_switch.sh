@@ -4,7 +4,7 @@ dumpsys_battery="$(dumpsys battery)"
 battery_level="$(cat '/sys/class/power_supply/battery/capacity')"
 battery_powered="$(echo "$dumpsys_battery" | egrep 'powered: true')"
 battery_status="$(echo "$dumpsys_battery" | egrep 'status: ' | sed -n 's/.*status: //g;$p')"
-temperature="$(cat '/sys/class/power_supply/battery/temp' | cut -c '1-2')"
+temperature="$(cat '/sys/class/power_supply/battery/temp' | sed -n 's/.$//g;$p')"
 power_stop="$(echo "$config_conf" | egrep '^power_stop=' | sed -n 's/power_stop=//g;$p')"
 power_start="$(echo "$config_conf" | egrep '^power_start=' | sed -n 's/power_start=//g;$p')"
 temperature_switch="$(echo "$config_conf" | egrep '^temperature_switch=' | sed -n 's/temperature_switch=//g;$p')"
@@ -28,7 +28,7 @@ if [ ! -n "$battery_level" ]; then
 	fi
 fi
 if [ ! -n "$temperature" ]; then
-	temperature="$(echo "$dumpsys_battery" | egrep 'temperature: ' | sed -n 's/.*temperature: //g;$p' | cut -c '1-2')"
+	temperature="$(echo "$dumpsys_battery" | egrep 'temperature: ' | sed -n 's/.*temperature: //g;s/.$//g;$p')"
 	if [ ! -n "$temperature" ]; then
 		echo "$(date +%F_%T) 无法获取温度，请联系作者适配" > "$MODDIR/log.log"
 		sed -i 's/\[.*\]/\[ 无法获取温度，请联系作者适配 \]/g' "$MODDIR/module.prop"
@@ -143,5 +143,5 @@ if [ -f "$MODDIR/power_switch" ]; then
 		fi
 	fi
 fi
-#version=2022111900
+#version=2022122000
 # ##
