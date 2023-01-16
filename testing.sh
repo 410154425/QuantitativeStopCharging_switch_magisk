@@ -10,6 +10,11 @@ state="$(cat "$MODDIR/module.prop" | egrep '^description=' | sed -n 's/.*=\[//g;
 config_conf="$(cat "$MODDIR/config.conf" | egrep -v '^#')"
 dumpsys_battery="$(dumpsys battery)"
 battery_level="$(cat '/sys/class/power_supply/battery/capacity')"
+now_current="$(cat '/sys/class/power_supply/battery/current_now')"
+power_stop_time="$(echo "$config_conf" | egrep '^power_stop_time=' | sed -n 's/power_stop_time=//g;$p')"
+charge_full="$(echo "$config_conf" | egrep '^charge_full=' | sed -n 's/charge_full=//g;$p')"
+power_reset="$(echo "$config_conf" | egrep '^power_reset=' | sed -n 's/power_reset=//g;$p')"
+Shut_down="$(echo "$config_conf" | egrep '^Shut_down=' | sed -n 's/Shut_down=//g;$p')"
 temperature="$(cat '/sys/class/power_supply/battery/temp' | sed -n 's/.$//g;$p')"
 power_stop="$(echo "$config_conf" | egrep '^power_stop=' | sed -n 's/power_stop=//g;$p')"
 power_start="$(echo "$config_conf" | egrep '^power_start=' | sed -n 's/power_start=//g;$p')"
@@ -54,7 +59,7 @@ if [ ! -n "$temperature" ]; then
 		echo "无法获取温度，请联系作者适配"
 	fi
 fi
-echo "充电状态$dumpsys_charging,power_on$power_on,power_off$power_off,power_switch$power_switch,停止充电电量$power_stop,恢复充电电量$power_start,开关温控$temperature_switch,停止温度$temperature_switch_stop,恢复温度$temperature_switch_start,电量$battery_level,温度$temperature"
+echo "充电状态$dumpsys_charging,power_on$power_on,power_off$power_off,power_switch$power_switch,停止充电电量$power_stop,恢复充电电量$power_start,开关温控$temperature_switch,停止温度$temperature_switch_stop,恢复温度$temperature_switch_start,电量$battery_level,温度$temperature,延时$power_stop_time,电流$now_current,充满再停$charge_full,自动拔插$power_reset,关机电量$Shut_down"
 #----------
 echo ---------- 搜索开关 ------------
 switch_list="$(cat "$MODDIR/list_switch")"
