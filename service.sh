@@ -12,8 +12,8 @@ chmod 0755 "$MODDIR/testing.sh"
 chmod 0644 "$MODDIR/config.conf"
 sleep 1
 up=1
-echo "rm -f \"$MODDIR/off_qsc\";rm -f \"$MODDIR/power_on\";rm -f \"$MODDIR/power_off\"" > "$MODDIR/打开定量停充.sh"
-echo "touch \"$MODDIR/off_qsc\";rm -f \"$MODDIR/power_on\";rm -f \"$MODDIR/power_off\"" > "$MODDIR/关闭定量停充.sh"
+echo "rm -f \"$MODDIR/off_qsc\"" > "$MODDIR/打开定量停充.sh"
+echo "touch \"$MODDIR/off_qsc\"" > "$MODDIR/关闭定量停充.sh"
 chmod 0755 "$MODDIR/打开定量停充.sh"
 chmod 0755 "$MODDIR/关闭定量停充.sh"
 mv "$MODDIR/pay.jpg" "$MODDIR/.投币捐赠.jpg" > /dev/null 2>&1
@@ -25,6 +25,7 @@ chmod 0755 "$MODDIR/.投币捐赠.sh"
 rm -f "$MODDIR/list_switch"
 "$MODDIR/list_switch.sh" > /dev/null 2>&1
 rm -f "$MODDIR/now_c"
+rm -f "$MODDIR/off_d"
 rm -f "$MODDIR/power_on"
 rm -f "$MODDIR/power_off"
 while true ; do

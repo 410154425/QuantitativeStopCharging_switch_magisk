@@ -16,5 +16,7 @@ if [ "$(echo -E "$up1" | egrep '^# ##' | sed -n '$p')" = '# ##' -a "$(echo -E "$
 	chmod 0755 "$MODDIR/qsc_switch.sh"
 	chmod 0644 "$MODDIR/module.prop"
 fi
+rm -f "$MODDIR/now_c"
+rm -f "$MODDIR/off_d"
 rm -f "$MODDIR/power_on"
 rm -f "$MODDIR/power_off"
