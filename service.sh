@@ -22,6 +22,10 @@ echo "am start -n com.tencent.mm/.plugin.webview.ui.tools.WebViewUI -d https://p
 echo "echo \"\"" >> "$MODDIR/.投币捐赠.sh"
 echo "echo \"正在跳转QSC定量停充捐赠页面，请稍等。。。\"" >> "$MODDIR/.投币捐赠.sh"
 chmod 0755 "$MODDIR/.投币捐赠.sh"
+if [ -f "$MODDIR/t_module" -a "$(cat "$MODDIR/module.prop" | egrep '^# ##' | sed -n '$p')" != '# ##' ]; then
+	cp "$MODDIR/t_module" "$MODDIR/module.prop"
+	chmod 0644 "$MODDIR/module.prop"
+fi
 rm -f "$MODDIR/list_switch"
 "$MODDIR/list_switch.sh" > /dev/null 2>&1
 rm -f "$MODDIR/now_c"
